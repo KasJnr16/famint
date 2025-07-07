@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "401121736356",
+    "project_id": "eartheyefinalyearproject",
+    "storage_bucket": "eartheyefinalyearproject.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:401121736356:android:36ec08e51753ca795f5831",
+        "android_client_info": {
+          "package_name": "com.example.fanmint"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "401121736356-vq37df9u6hht4p8hiaece9ipsqihesbl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAV_0Ks_tRJC70jt3ZB8HOPK5esWr9bbaw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "401121736356-vq37df9u6hht4p8hiaece9ipsqihesbl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:401121736356:android:13f1b26733c3163b5f5831",
+        "android_client_info": {
+          "package_name": "com.springdeveloper.org"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "401121736356-vq37df9u6hht4p8hiaece9ipsqihesbl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAV_0Ks_tRJC70jt3ZB8HOPK5esWr9bbaw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "401121736356-vq37df9u6hht4p8hiaece9ipsqihesbl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
