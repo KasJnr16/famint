@@ -1,14 +1,10 @@
-import 'dart:convert';
-
 import 'package:calendar_agenda/calendar_agenda.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import 'fullcalendar.dart';
-import 'typedata.dart';
 
 class CalendarAgenda extends StatefulWidget implements PreferredSizeWidget {
   final CalendarAgendaController? controller;
@@ -308,7 +304,9 @@ class CalendarAgendaState extends State<CalendarAgenda>
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: widget.fullCalendarBackgroundColor,
+      backgroundColor: Theme.of(context).brightness == Brightness.dark
+          ? widget.fullCalendarBackgroundColor
+          : Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
             topLeft: Radius.circular(30.0), topRight: Radius.circular(30.0)),

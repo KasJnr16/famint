@@ -1,5 +1,6 @@
 import 'package:fanmint/utility/constants/colors.dart';
 import 'package:fanmint/utility/helpers/helper_functions.dart';
+import 'package:fanmint/view/subscription_info/subscription_info_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:calendar_agenda/calendar_agenda.dart';
@@ -46,11 +47,14 @@ class CalenderView extends StatelessWidget {
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Text("Calender",
-                                          style: TextStyle(
-                                              color:
-                                                  dark ? TColor.gray30 : null,
-                                              fontSize: 16)),
+                                      Text(
+                                        "Calender",
+                                        style: TextStyle(
+                                          color: dark ? TColor.gray30 : null,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      )
                                     ],
                                   ),
                                   Row(
@@ -84,7 +88,7 @@ class CalenderView extends StatelessWidget {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    "3 subscription for today",
+                                    "${controller.subArr.length} subscription(s) for today",
                                     style: TextStyle(
                                         color: dark ? TColor.gray30 : null,
                                         fontSize: 14,
@@ -111,7 +115,10 @@ class CalenderView extends StatelessWidget {
                                       alignment: Alignment.center,
                                       child: Row(
                                         children: [
-                                          Text("January",
+                                          Text(
+                                              DateTime.now()
+                                                  .toLocal()
+                                                  .monthName,
                                               style: TextStyle(
                                                   fontSize: 12,
                                                   fontWeight: FontWeight.w600)),
@@ -176,29 +183,30 @@ class CalenderView extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "January",
+                            DateTime.now().toLocal().monthName,
                             style: TextStyle(
                                 fontSize: 20, fontWeight: FontWeight.bold),
                           ),
-                          Text(
-                            "\$24.98",
-                            style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold),
-                          )
+                          Obx(() => Text(
+                                "\$${controller.dailyTotal.value.toStringAsFixed(2)}",
+                                style: TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.bold),
+                              ))
                         ],
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "01.08.2023",
+                            "${DateTime.now().day.toString().padLeft(2, '0')}.${DateTime.now().month.toString().padLeft(2, '0')}.${DateTime.now().year}",
                             style: TextStyle(
-                                color: TColor.gray30,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500),
+                              color: TColor.gray30,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                           Text(
-                            "in upcoming bills",
+                            "bills",
                             style: TextStyle(
                                 color: TColor.gray30,
                                 fontSize: 12,
@@ -225,7 +233,7 @@ class CalenderView extends StatelessWidget {
                     final sObj = controller.subArr[index];
                     return SubScriptionCell(
                       sObj: sObj,
-                      onPressed: () {},
+                      onPressed: () => Get.to(() => SubscriptionInfoView(item: sObj)),
                     );
                   },
                 ),

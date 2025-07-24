@@ -6,6 +6,7 @@ import 'package:fanmint/utility/helpers/helper_functions.dart';
 import 'package:fanmint/utility/logging/logger.dart';
 import 'package:fanmint/utility/popups/loaders.dart';
 import 'package:fanmint/utility/theme/theme_provider.dart';
+import 'package:fanmint/view/profile/profile_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -96,7 +97,15 @@ class SettingsView extends StatelessWidget {
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: [Text("Settings", style: TextStyle(fontSize: 16))],
+                  children: [
+                    Text(
+                      "Settings",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    )
+                  ],
                 ),
               ],
             ),
@@ -121,14 +130,18 @@ class SettingsView extends StatelessWidget {
               },
             ),
             const SizedBox(height: 8),
-            Text(userController.currentUser.value.fullname,
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
+            Obx(
+              () => Text(userController.currentUser.value.fullname,
+                  style: TextStyle(fontWeight: FontWeight.w700)),
+            ),
             const SizedBox(height: 4),
-            Text(userController.currentUser.value.email,
-                style: TextStyle(
-                    color: TColor.gray30,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500)),
+            Obx(
+              () => Text(userController.currentUser.value.email,
+                  style: TextStyle(
+                      color: TColor.gray30,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500)),
+            ),
             const SizedBox(height: 15),
             InkWell(
               borderRadius: BorderRadius.circular(15),
@@ -142,9 +155,11 @@ class SettingsView extends StatelessWidget {
                       : UniColors.lightContainer,
                   borderRadius: BorderRadius.circular(15),
                 ),
-                child: Text("Edit profile",
-                    style:
-                        TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+                child: TextButton(
+                    child: Text("Edit profile",
+                        style: TextStyle(
+                            fontSize: 12, fontWeight: FontWeight.w600)),
+                    onPressed: () => Get.to(() => ProfileView())),
               ),
             ),
             Padding(
@@ -178,17 +193,9 @@ class SettingsView extends StatelessWidget {
                   _sectionTitle("My subscription"),
                   _settingContainer(dark, const [
                     IconItemRow(
-                        title: "Sorting",
-                        icon: "assets/img/sorting.png",
-                        value: "Date"),
-                    IconItemRow(
-                        title: "Summary",
-                        icon: "assets/img/chart.png",
-                        value: "Average"),
-                    IconItemRow(
                         title: "Default currency",
                         icon: "assets/img/money.png",
-                        value: "USD (\$)"),
+                        value: "Cedi (\GHC)"),
                   ]),
                   _sectionTitle("Appearance"),
                   _settingContainer(

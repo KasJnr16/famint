@@ -28,7 +28,7 @@ class CardsView extends StatelessWidget {
                   width: double.infinity,
                   height: 600,
                   child: Swiper(
-                    itemCount: controller.carArr.length,
+                    itemCount: controller.cardList.length,
                     customLayoutOption:
                         CustomLayoutOption(startIndex: -1, stateCount: 3)
                           ..addRotate([-45.0 / 180, 0.0, 45.0 / 180])
@@ -45,7 +45,7 @@ class CardsView extends StatelessWidget {
                     layout: SwiperLayout.STACK,
                     viewportFraction: 0.8,
                     itemBuilder: (context, index) {
-                      final cObj = controller.carArr[index];
+                      final card = controller.cardList[index];
                       return Container(
                         decoration: BoxDecoration(
                           color: TColor.gray70,
@@ -69,19 +69,19 @@ class CardsView extends StatelessWidget {
                                       fontSize: 16,
                                       fontWeight: FontWeight.w600)),
                               const SizedBox(height: 115),
-                              Text(cObj["name"],
+                              Text(card.name,
                                   style: TextStyle(
                                       color: TColor.gray20,
                                       fontSize: 12,
                                       fontWeight: FontWeight.w600)),
                               const SizedBox(height: 8),
-                              Text(cObj["number"],
+                              Text(card.number,
                                   style: TextStyle(
                                       color: TColor.white,
                                       fontSize: 16,
                                       fontWeight: FontWeight.w600)),
                               const SizedBox(height: 8),
-                              Text(cObj["month_year"],
+                              Text(card.monthYear,
                                   style: TextStyle(
                                       color: TColor.white,
                                       fontSize: 14,
@@ -163,7 +163,40 @@ class CardsView extends StatelessWidget {
                             horizontal: 20, vertical: 20),
                         child: InkWell(
                           borderRadius: BorderRadius.circular(16),
-                          onTap: () {},
+                          onTap: () {
+                            Get.defaultDialog(
+                              title: "Add New Card",
+                              content: Column(
+                                children: [
+                                  TextField(
+                                    controller: controller.cardNameController,
+                                    decoration: const InputDecoration(
+                                        labelText: 'Name'),
+                                  ),
+                                  SizedBox(height: 8),
+                                  TextField(
+                                    controller: controller.cardNumberController,
+                                    decoration: const InputDecoration(
+                                        labelText: 'Card Number'),
+                                  ),
+                                  SizedBox(height: 8),
+                                  TextField(
+                                    controller:
+                                        controller.cardMonthYearController,
+                                    decoration: const InputDecoration(
+                                        labelText: 'MM/YY'),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      controller.addCard();
+                                    },
+                                    child: const Text("Add Card"),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
                           child: DottedBorder(
                             dashPattern: const [5, 4],
                             strokeWidth: 1,

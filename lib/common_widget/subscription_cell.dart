@@ -1,3 +1,4 @@
+import 'package:fanmint/models/budget_model.dart';
 import 'package:fanmint/utility/constants/colors.dart';
 import 'package:fanmint/utility/helpers/helper_functions.dart';
 import 'package:flutter/material.dart';
@@ -5,7 +6,7 @@ import 'package:flutter/material.dart';
 import '../common/color_extension.dart';
 
 class SubScriptionCell extends StatelessWidget {
-  final Map sObj;
+  final BudgetModel sObj;
   final VoidCallback onPressed;
 
   const SubScriptionCell(
@@ -30,21 +31,16 @@ class SubScriptionCell extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.asset(
-              sObj["icon"],
-              width: 45,
-              height: 45,
-            ),
             const Spacer(),
             Text(
-              sObj["name"],
+              sObj.name,
               style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
             ),
             const SizedBox(
               width: 8,
             ),
             Text(
-              "\$${sObj["price"]}",
+              "\$${sObj.originalSpendAmount}",
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
             )
           ],

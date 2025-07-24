@@ -63,7 +63,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '401121736356',
     projectId: 'eartheyefinalyearproject',
     storageBucket: 'eartheyefinalyearproject.firebasestorage.app',
-    iosClientId: '401121736356-hensssqcirpbgh3e87jug6ml0m05misd.apps.googleusercontent.com',
+    iosClientId:
+        '401121736356-hensssqcirpbgh3e87jug6ml0m05misd.apps.googleusercontent.com',
     iosBundleId: 'com.example.fanmint',
   );
 }

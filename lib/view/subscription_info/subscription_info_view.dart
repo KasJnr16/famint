@@ -1,15 +1,18 @@
 import 'package:dotted_border/dotted_border.dart';
+import 'package:fanmint/models/budget_model.dart';
 import 'package:fanmint/utility/constants/colors.dart';
 import 'package:fanmint/utility/helpers/helper_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:fanmint/common_widget/secondary_boutton.dart';
+import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 import '../../common/color_extension.dart';
 import '../../common_widget/item_row.dart';
 
 class SubscriptionInfoView extends StatefulWidget {
-  final Map sObj;
-  const SubscriptionInfoView({super.key, required this.sObj});
+  final BudgetModel item;
+  const SubscriptionInfoView({super.key, required this.item});
 
   @override
   State<SubscriptionInfoView> createState() => _SubscriptionInfoViewState();
@@ -80,16 +83,16 @@ class _SubscriptionInfoViewState extends State<SubscriptionInfoView> {
                             ],
                           ),
                           const Spacer(),
-                          Image.asset(
-                            widget.sObj["icon"],
-                            width: media.width * 0.25,
-                            height: media.width * 0.25,
-                          ),
+                          // Image.asset(
+                          //   widget.item["icon"],
+                          //   width: media.width * 0.25,
+                          //   height: media.width * 0.25,
+                          // ),
                           const SizedBox(
                             height: 20,
                           ),
                           Text(
-                            widget.sObj["name"],
+                            widget.item.name,
                             style: TextStyle(
                                 color: dark ? TColor.white : UniColors.dark,
                                 fontSize: 32,
@@ -99,7 +102,7 @@ class _SubscriptionInfoViewState extends State<SubscriptionInfoView> {
                             height: 15,
                           ),
                           Text(
-                            "\$${widget.sObj["price"]}",
+                            "\$${widget.item.originalSpendAmount}",
                             style: TextStyle(
                                 color: TColor.gray30,
                                 fontSize: 20,
@@ -127,27 +130,27 @@ class _SubscriptionInfoViewState extends State<SubscriptionInfoView> {
                               children: [
                                 ItemRow(
                                   title: "Name",
-                                  value: widget.sObj["name"],
+                                  value: widget.item.name,
                                 ),
-                                const ItemRow(
+                                ItemRow(
                                   title: "Description",
-                                  value: "Music app",
+                                  value: widget.item.description.isEmpty
+                                      ? "No description provided"
+                                      : widget.item.description,
                                 ),
-                                const ItemRow(
-                                  title: "Category",
-                                  value: "Enterteintment",
+                                ItemRow(
+                                  title: "Start Date",
+                                  value: DateFormat.yMMMMEEEEd()
+                                      .format(widget.item.startDate),
                                 ),
-                                const ItemRow(
-                                  title: "First payment",
-                                  value: "08.07.2023",
+                                ItemRow(
+                                  title: "End Date",
+                                  value: DateFormat.yMMMMEEEEd()
+                                      .format(widget.item.endDate),
                                 ),
-                                const ItemRow(
-                                  title: "Reminder",
-                                  value: "Never",
-                                ),
-                                const ItemRow(
+                                ItemRow(
                                   title: "Currency",
-                                  value: "USD (\$)",
+                                  value: "GHANA (GHC)",
                                 ),
                               ],
                             ),
@@ -155,7 +158,8 @@ class _SubscriptionInfoViewState extends State<SubscriptionInfoView> {
                           const SizedBox(
                             height: 20,
                           ),
-                          SecondaryButton(title: "Save", onPressed: () {})
+                          SecondaryButton(
+                              title: "Close", onPressed: () => Get.back())
                         ],
                       ),
                     )

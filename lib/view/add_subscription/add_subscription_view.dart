@@ -3,7 +3,6 @@ import 'package:fanmint/utility/constants/colors.dart';
 import 'package:fanmint/utility/helpers/helper_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:fanmint/common/color_extension.dart';
-import 'package:fanmint/common_widget/primary_button.dart';
 import 'package:fanmint/common_widget/round_textfield.dart';
 
 import '../../common_widget/image_button.dart';

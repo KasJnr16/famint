@@ -1,15 +1,18 @@
+import 'package:fanmint/controllers/subcription_controller.dart';
+import 'package:fanmint/models/budget_model.dart';
 import 'package:fanmint/utility/constants/colors.dart';
+import 'package:fanmint/utility/constants/sizes.dart';
 import 'package:fanmint/utility/helpers/helper_functions.dart';
 import 'package:flutter/material.dart';
 
 import '../common/color_extension.dart';
 
-class SubScriptionHomeRow extends StatelessWidget {
-  final Map sObj;
+class ConfirmedExpensesRow extends StatelessWidget {
+  final BudgetModel item;
   final VoidCallback onPressed;
 
-  const SubScriptionHomeRow(
-      {super.key, required this.sObj, required this.onPressed});
+  const ConfirmedExpensesRow(
+      {super.key, required this.item, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -31,17 +34,13 @@ class SubScriptionHomeRow extends StatelessWidget {
           alignment: Alignment.center,
           child: Row(
             children: [
-              Image.asset(
-                sObj["icon"],
-                width: 40,
-                height: 40,
-              ),
+              Icon(Icons.done),
               const SizedBox(
                 width: 8,
               ),
               Expanded(
                 child: Text(
-                  sObj["name"],
+                  item.name,
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
                 ),
               ),
@@ -49,9 +48,24 @@ class SubScriptionHomeRow extends StatelessWidget {
                 width: 8,
               ),
               Text(
-                "\$${sObj["price"]}",
+                "\GHC${item.originalSpendAmount}",
                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
-              )
+              ),
+              const SizedBox(
+                width: UniSizes.spaceBtwItems,
+              ),
+              TextButton(
+                onPressed: () {
+                  SubscriptionController.instance.unConfirmedExpense(item);
+                },
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.red,
+                  minimumSize: const Size(0, 32),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                ),
+                child: const Text("Remove"),
+              ),
             ],
           ),
         ),

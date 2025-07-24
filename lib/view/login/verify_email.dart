@@ -1,10 +1,7 @@
-import 'package:fanmint/common_widget/primary_button.dart';
 import 'package:fanmint/controllers/login/verify_email_controller.dart';
 import 'package:fanmint/repositories/authentication/authentication_repository.dart';
-import 'package:fanmint/utility/constants/image_strings.dart';
 import 'package:fanmint/utility/constants/sizes.dart';
 import 'package:fanmint/utility/constants/text_string.dart';
-import 'package:fanmint/utility/helpers/helper_functions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

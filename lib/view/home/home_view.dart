@@ -29,9 +29,9 @@ class HomeView extends StatelessWidget {
           children: [
             _buildHeader(context, media, dark),
             Obx(() => _buildToggleTabs(controller, dark)),
-            Obx(() => controller.isSubscription.value
-                ? _buildSubscriptionList(controller)
-                : _buildUpcomingBillList(controller)),
+            Obx(() => !controller.isSpentToday.value
+                ? _buildConfirmedExpenses(controller)
+                : _buildPlannedExpenses(controller)),
             const SizedBox(height: 110),
           ],
         ),
@@ -40,6 +40,7 @@ class HomeView extends StatelessWidget {
   }
 
   Widget _buildHeader(BuildContext context, Size media, bool dark) {
+    final controller = SubscriptionController.instance;
     return Container(
       height: media.width * 1.1,
       decoration: BoxDecoration(
@@ -95,14 +96,43 @@ class HomeView extends StatelessWidget {
                 fit: BoxFit.contain,
               ),
               SizedBox(height: media.width * 0.07),
-              const Text("\$1,235",
-                  style: TextStyle(fontSize: 40, fontWeight: FontWeight.w700)),
+
+              //money
+              Obx(
+                () => Text(
+                  "GHC ${controller.calculatedBudget.value.toStringAsFixed(2)}",
+                  style: const TextStyle(
+                      fontSize: 40, fontWeight: FontWeight.w700),
+                ),
+              ),
               SizedBox(height: media.width * 0.055),
-              const Text("This month bills",
+
+              //button
+              const Text("Monthly Budget",
                   style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
               SizedBox(height: media.width * 0.07),
               InkWell(
-                onTap: () {},
+                onTap: () {
+                  Get.defaultDialog(
+                    title: "Set Monthly Budget",
+                    content: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: TextField(
+                        controller: controller.setMontlyBudget,
+                        keyboardType: TextInputType.number,
+                        decoration: const InputDecoration(
+                            labelText: "Enter budget (GHC)"),
+                      ),
+                    ),
+                    confirm: ElevatedButton(
+                        onPressed: () {
+                          controller.setBudget();
+                        },
+                        child: Text("Confrim")),
+                    cancel: OutlinedButton(
+                        onPressed: () => Get.back(), child: Text("Cancel")),
+                  );
+                },
                 child: Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
@@ -114,7 +144,7 @@ class HomeView extends StatelessWidget {
                         dark ? TColor.gray60.withOpacity(0.3) : UniColors.white,
                     borderRadius: BorderRadius.circular(16),
                   ),
-                  child: const Text("See your budget",
+                  child: const Text("Set Your Budget",
                       style:
                           TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
                 ),
@@ -130,8 +160,8 @@ class HomeView extends StatelessWidget {
                   children: [
                     Expanded(
                       child: StatusButton(
-                        title: "Active subs",
-                        value: "12",
+                        title: "Active",
+                        value: controller.plannedExpensesList.length.toString(),
                         statusColor: TColor.secondary,
                         onPressed: () {},
                       ),
@@ -139,8 +169,8 @@ class HomeView extends StatelessWidget {
                     const SizedBox(width: 8),
                     Expanded(
                       child: StatusButton(
-                        title: "Highest subs",
-                        value: "\$19.99",
+                        title: "Highest Expense",
+                        value: controller.highestExpense.value.toString(),
                         statusColor: TColor.primary10,
                         onPressed: () {},
                       ),
@@ -149,7 +179,7 @@ class HomeView extends StatelessWidget {
                     Expanded(
                       child: StatusButton(
                         title: "Lowest subs",
-                        value: "\$5.99",
+                        value: controller.lowestExpense.value.toString(),
                         statusColor: TColor.secondaryG,
                         onPressed: () {},
                       ),
@@ -177,16 +207,16 @@ class HomeView extends StatelessWidget {
         children: [
           Expanded(
             child: SegmentButton(
-              title: "Your subscription",
-              isActive: controller.isSubscription.value,
-              onPressed: () => controller.isSubscription.value = true,
+              title: "Planned Expenses",
+              isActive: controller.isSpentToday.value,
+              onPressed: () => controller.isSpentToday.value = true,
             ),
           ),
           Expanded(
             child: SegmentButton(
-              title: "Upcoming bills",
-              isActive: !controller.isSubscription.value,
-              onPressed: () => controller.isSubscription.value = false,
+              title: "Confirmed Expenses",
+              isActive: !controller.isSpentToday.value,
+              onPressed: () => controller.isSpentToday.value = false,
             ),
           ),
         ],
@@ -194,32 +224,32 @@ class HomeView extends StatelessWidget {
     );
   }
 
-  Widget _buildSubscriptionList(SubscriptionController controller) {
+  Widget _buildConfirmedExpenses(SubscriptionController controller) {
     return ListView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
-      itemCount: controller.subArr.length,
+      itemCount: controller.confirmedExpensesList.length,
       itemBuilder: (context, index) {
-        final sObj = controller.subArr[index];
-        return SubScriptionHomeRow(
-          sObj: sObj,
-          onPressed: () => Get.to(() => SubscriptionInfoView(sObj: sObj)),
+        final item = controller.confirmedExpensesList[index];
+        return ConfirmedExpensesRow(
+          item: item,
+          onPressed: () => Get.to(() => SubscriptionInfoView(item: item)),
         );
       },
     );
   }
 
-  Widget _buildUpcomingBillList(SubscriptionController controller) {
+  Widget _buildPlannedExpenses(SubscriptionController controller) {
     return ListView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
-      itemCount: controller.bilArr.length,
+      itemCount: controller.plannedExpensesList.length,
       itemBuilder: (context, index) {
-        final sObj = controller.bilArr[index];
-        return UpcomingBillRow(
-          sObj: sObj,
+        final item = controller.plannedExpensesList[index];
+        return PlannedExpensesRow(
+          item: item,
           onPressed: () {},
         );
       },

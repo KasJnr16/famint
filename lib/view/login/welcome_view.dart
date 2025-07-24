@@ -1,8 +1,6 @@
 import 'package:fanmint/utility/constants/colors.dart';
-import 'package:fanmint/utility/constants/sizes.dart';
 import 'package:fanmint/utility/helpers/helper_functions.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:fanmint/view/login/sign_in_view.dart';
 import 'package:fanmint/view/login/social_login.dart';
 import 'package:get/get.dart';

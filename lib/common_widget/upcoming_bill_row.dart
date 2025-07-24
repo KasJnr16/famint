@@ -1,19 +1,25 @@
+import 'package:fanmint/controllers/subcription_controller.dart';
+import 'package:fanmint/models/budget_model.dart';
 import 'package:fanmint/utility/constants/colors.dart';
+import 'package:fanmint/utility/constants/sizes.dart';
 import 'package:fanmint/utility/helpers/helper_functions.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../common/color_extension.dart';
 
-class UpcomingBillRow extends StatelessWidget {
-  final Map sObj;
+class PlannedExpensesRow extends StatelessWidget {
+  final BudgetModel item;
   final VoidCallback onPressed;
 
-  const UpcomingBillRow(
-      {super.key, required this.sObj, required this.onPressed});
+  const PlannedExpensesRow(
+      {super.key, required this.item, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
+    final today = DateTime.now();
     final dark = HelperFunctions.isDarkMode(context);
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: InkWell(
@@ -44,38 +50,58 @@ class UpcomingBillRow extends StatelessWidget {
                 child: Column(
                   children: [
                     Text(
-                      "Jun",
+                      DateFormat.MMM().format(today), // Shows 'Jul' for July
                       style: TextStyle(
-                          color: dark ? TColor.gray30 : UniColors.dark,
-                          fontSize: 10,
-                          fontWeight: FontWeight.w500),
+                        color: dark ? TColor.gray30 : UniColors.dark,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                     Text(
-                      "25",
+                      DateFormat.d().format(today), // Shows '17' for 17th
                       style: TextStyle(
-                          color: dark ? TColor.gray30 : UniColors.dark,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500),
-                    )
+                        color: dark ? TColor.gray30 : UniColors.dark,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
                   ],
                 ),
               ),
               const SizedBox(
                 width: 8,
               ),
+
+              //name
               Expanded(
                 child: Text(
-                  sObj["name"],
+                  item.name,
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
                 ),
               ),
               const SizedBox(
                 width: 8,
               ),
+
+              // amount
               Text(
-                "\$${sObj["price"]}",
+                "\$${item.originalSpendAmount}",
                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
-              )
+              ),
+              SizedBox(
+                width: UniSizes.spaceBtwItems,
+              ),
+              //  butn
+              TextButton(
+                onPressed: () {SubscriptionController.instance.confirmedExpense(item);},
+                style: TextButton.styleFrom(
+                  foregroundColor: TColor.primary,
+                  minimumSize: const Size(0, 32),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                ),
+                child: const Text("Confirm"),
+              ),
             ],
           ),
         ),

@@ -1,19 +1,20 @@
+import 'package:fanmint/models/budget_model.dart';
 import 'package:fanmint/utility/constants/colors.dart';
 import 'package:fanmint/utility/helpers/helper_functions.dart';
 import 'package:flutter/material.dart';
+import 'package:iconsax/iconsax.dart';
 
 import '../common/color_extension.dart';
 
 class BudgetsRow extends StatelessWidget {
-  final Map bObj;
+  final BudgetModel budget;
   final VoidCallback onPressed;
 
-  const BudgetsRow({super.key, required this.bObj, required this.onPressed});
+  const BudgetsRow({super.key, required this.budget, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
-    var proVal = (double.tryParse(bObj["left_amount"]) ?? 0) /
-        (double.tryParse(bObj["total_budget"]) ?? 0);
+    var proVal = (budget.leftAmount) / (budget.totalMonthlyBudget);
     final dark = HelperFunctions.isDarkMode(context);
 
     return Padding(
@@ -38,14 +39,8 @@ class BudgetsRow extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Image.asset(
-                      bObj["icon"],
-                      width: 30,
-                      height: 30,
-                      color: TColor.gray40,
-                    ),
-                  ),
+                      padding: const EdgeInsets.all(10.0),
+                      child: Icon(Iconsax.wallet)),
                   const SizedBox(
                     width: 8,
                   ),
@@ -55,12 +50,12 @@ class BudgetsRow extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          bObj["name"],
+                          budget.name,
                           style: TextStyle(
                               fontSize: 14, fontWeight: FontWeight.w600),
                         ),
                         Text(
-                          "\$${bObj["left_amount"]} left to spend",
+                          "\$${budget.leftAmount} left to spend",
                           style: TextStyle(
                               color: TColor.gray30,
                               fontSize: 12,
@@ -77,12 +72,12 @@ class BudgetsRow extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "\$${bObj["spend_amount"]}",
+                          "\$${budget.monthlyExpenseAmount}",
                           style: TextStyle(
                               fontSize: 14, fontWeight: FontWeight.w600),
                         ),
                         Text(
-                          "of \$${bObj["total_budget"]}",
+                          "of \$${budget.totalMonthlyBudget}",
                           style: TextStyle(
                               color: TColor.gray30,
                               fontSize: 12,
@@ -96,7 +91,7 @@ class BudgetsRow extends StatelessWidget {
               ),
               LinearProgressIndicator(
                 backgroundColor: dark ? TColor.gray60 : UniColors.light,
-                valueColor: AlwaysStoppedAnimation(bObj["color"]),
+                valueColor: AlwaysStoppedAnimation(budget.color),
                 minHeight: 3,
                 value: proVal,
               )
