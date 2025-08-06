@@ -1,10 +1,6 @@
-import 'package:fanmint/utility/constants/colors.dart';
 import 'package:fanmint/utility/constants/sizes.dart';
-import 'package:fanmint/utility/helpers/helper_functions.dart';
 import 'package:fanmint/utility/validators/validator.dart';
 import 'package:flutter/material.dart';
-
-import '../common/color_extension.dart';
 
 class RoundTextField extends StatelessWidget {
   final String title;
