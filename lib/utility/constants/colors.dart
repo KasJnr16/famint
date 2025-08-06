@@ -4,7 +4,7 @@ class UniColors {
   UniColors._();
 
   //App Basic Colors
-  static const Color primary = const Color.fromARGB(255, 24, 163, 89);
+  static const Color primary = Color.fromARGB(255, 13, 169, 60);
   static const Color secondary = Colors.amber;
   static const Color accent = Color(0xFFb0c7ff);
 

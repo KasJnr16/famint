@@ -1,4 +1,5 @@
 import 'package:fanmint/utility/constants/colors.dart';
+import 'package:fanmint/utility/constants/sizes.dart';
 import 'package:fanmint/utility/helpers/helper_functions.dart';
 import 'package:flutter/material.dart';
 
@@ -17,7 +18,7 @@ class SegmentButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(UniSizes.borderRadius),
       onTap: onPressed,
       child: Container(
         decoration: isActive

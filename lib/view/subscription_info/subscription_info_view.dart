@@ -11,8 +11,8 @@ import '../../common/color_extension.dart';
 import '../../common_widget/item_row.dart';
 
 class SubscriptionInfoView extends StatefulWidget {
-  final BudgetModel item;
-  const SubscriptionInfoView({super.key, required this.item});
+  final BudgetModel budget;
+  const SubscriptionInfoView({super.key, required this.budget});
 
   @override
   State<SubscriptionInfoView> createState() => _SubscriptionInfoViewState();
@@ -24,7 +24,6 @@ class _SubscriptionInfoViewState extends State<SubscriptionInfoView> {
     final dark = HelperFunctions.isDarkMode(context);
     var media = MediaQuery.sizeOf(context);
     return Scaffold(
-      backgroundColor: Colors.transparent,
       body: SingleChildScrollView(
         child: SafeArea(
           child: Stack(
@@ -66,7 +65,7 @@ class _SubscriptionInfoViewState extends State<SubscriptionInfoView> {
                                         dark ? TColor.white : UniColors.dark),
                               ),
                               Text(
-                                "Subscription info",
+                                "Details",
                                 style: TextStyle(
                                     fontSize: 16, fontWeight: FontWeight.bold),
                               ),
@@ -92,7 +91,7 @@ class _SubscriptionInfoViewState extends State<SubscriptionInfoView> {
                             height: 20,
                           ),
                           Text(
-                            widget.item.name,
+                            widget.budget.title,
                             style: TextStyle(
                                 color: dark ? TColor.white : UniColors.dark,
                                 fontSize: 32,
@@ -102,7 +101,7 @@ class _SubscriptionInfoViewState extends State<SubscriptionInfoView> {
                             height: 15,
                           ),
                           Text(
-                            "\$${widget.item.originalSpendAmount}",
+                            "GHC ${widget.budget.totalBudget}",
                             style: TextStyle(
                                 color: TColor.gray30,
                                 fontSize: 20,
@@ -130,23 +129,23 @@ class _SubscriptionInfoViewState extends State<SubscriptionInfoView> {
                               children: [
                                 ItemRow(
                                   title: "Name",
-                                  value: widget.item.name,
+                                  value: widget.budget.title,
                                 ),
                                 ItemRow(
                                   title: "Description",
-                                  value: widget.item.description.isEmpty
+                                  value: widget.budget.description.isEmpty
                                       ? "No description provided"
-                                      : widget.item.description,
+                                      : widget.budget.description,
                                 ),
                                 ItemRow(
                                   title: "Start Date",
                                   value: DateFormat.yMMMMEEEEd()
-                                      .format(widget.item.startDate),
+                                      .format(widget.budget.startDate),
                                 ),
                                 ItemRow(
                                   title: "End Date",
                                   value: DateFormat.yMMMMEEEEd()
-                                      .format(widget.item.endDate),
+                                      .format(widget.budget.endDate),
                                 ),
                                 ItemRow(
                                   title: "Currency",

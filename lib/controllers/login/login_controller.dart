@@ -63,6 +63,7 @@ class LoginController extends GetxController {
           .loginWithEmailAndPassword(email.text.trim(), password.text.trim());
 
       //Remove loader
+      UserController.instance.fetchUserRecord();
       UniFullScreenLoader.stopLoading();
 
       //Redirect
@@ -105,12 +106,5 @@ class LoginController extends GetxController {
     UniLogger.info("Resetting userController...");
     userController.fetchUserRecord();
     UniLogger.info("userController reset successfully.");
-  }
-
-  @override
-  void onClose() {
-    email.dispose();
-    password.dispose();
-    super.onClose();
   }
 }

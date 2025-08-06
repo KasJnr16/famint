@@ -15,6 +15,7 @@ dependencies:
   flutter_native_splash:
   logger:
   connectivity_plus:
+  lottie:
 
   cupertino_icons: ^1.0.2
   dotted_border: ^2.0.0+3
@@ -80,6 +81,7 @@ flutter:
 
   assets:
     - assets/img/
+    - assets/lottie/
   fonts:
     - family: Inter
       fonts:

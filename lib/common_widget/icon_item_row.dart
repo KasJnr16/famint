@@ -1,3 +1,5 @@
+import 'package:fanmint/utility/constants/colors.dart';
+import 'package:fanmint/utility/helpers/helper_functions.dart';
 import 'package:flutter/cupertino.dart';
 
 import '../common/color_extension.dart';
@@ -93,7 +95,12 @@ class IconItemSwitchRow extends StatelessWidget {
           const SizedBox(
             width: 8,
           ),
-          CupertinoSwitch(value: value, onChanged: didChange)
+          CupertinoSwitch(
+              activeColor: HelperFunctions.isDarkMode(context)
+                  ? UniColors.secondary
+                  : UniColors.primary,
+              value: value,
+              onChanged: didChange)
         ],
       ),
     );

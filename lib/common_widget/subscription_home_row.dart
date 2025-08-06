@@ -40,7 +40,7 @@ class ConfirmedExpensesRow extends StatelessWidget {
               ),
               Expanded(
                 child: Text(
-                  item.name,
+                  item.title,
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
                 ),
               ),
@@ -48,7 +48,7 @@ class ConfirmedExpensesRow extends StatelessWidget {
                 width: 8,
               ),
               Text(
-                "\GHC${item.originalSpendAmount}",
+                "\GHC${item.dailyCost}",
                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
               ),
               const SizedBox(
@@ -56,7 +56,7 @@ class ConfirmedExpensesRow extends StatelessWidget {
               ),
               TextButton(
                 onPressed: () {
-                  SubscriptionController.instance.unConfirmedExpense(item);
+                  SubscriptionController.instance.unconfirmExpense(item);
                 },
                 style: TextButton.styleFrom(
                   foregroundColor: Colors.red,

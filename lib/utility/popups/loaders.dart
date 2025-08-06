@@ -1,10 +1,10 @@
 import 'package:fanmint/common/color_extension.dart';
+import 'package:fanmint/utility/constants/colors.dart';
+import 'package:fanmint/utility/helpers/helper_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class UniLoaders {
-  static get HelperFunctions => null;
-
   static hideSnackBar() =>
       ScaffoldMessenger.of(Get.context!).hideCurrentSnackBar();
 
@@ -40,7 +40,9 @@ class UniLoaders {
       isDismissible: true,
       shouldIconPulse: true,
       colorText: TColor.white,
-      backgroundColor: TColor.primary,
+      backgroundColor: HelperFunctions.isDarkMode(Get.context!)
+          ? UniColors.secondary
+          : UniColors.primary,
       snackPosition: SnackPosition.BOTTOM,
       duration: Duration(seconds: duration),
       margin: const EdgeInsets.all(10),

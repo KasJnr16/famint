@@ -1,23 +1,19 @@
 // GetX-based HomeView Refactor
-import 'package:fanmint/common_widget/animation_loader.dart';
 import 'package:fanmint/common_widget/shimmer.dart';
 import 'package:fanmint/controllers/subcription_controller.dart';
 import 'package:fanmint/controllers/user/user_controller.dart';
 import 'package:fanmint/utility/constants/sizes.dart';
-import 'package:fanmint/view/add_account/add_account.dart';
 import 'package:fanmint/view/settings/settings_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:fanmint/common/color_extension.dart';
 import 'package:fanmint/utility/constants/colors.dart';
 import 'package:fanmint/utility/helpers/helper_functions.dart';
-import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:iconsax/iconsax.dart';
 import '../../common_widget/segment_button.dart';
 import '../../common_widget/subscription_home_row.dart';
 import '../../common_widget/upcoming_bill_row.dart';
 import '../subscription_info/subscription_info_view.dart';
-import 'package:intl/intl.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});
@@ -50,7 +46,7 @@ class HomeView extends StatelessWidget {
                           ? UniShimmerEffect(width: 60, height: 20)
                           : Text(
                               "Hi, ${userController.currentUser.value.fullname}",
-                              style: Theme.of(context).textTheme.headlineSmall,
+                              style: Theme.of(context).textTheme.titleLarge,
                             )),
                     ],
                   ),
@@ -82,9 +78,9 @@ class HomeView extends StatelessWidget {
 
   Widget _buildHeader(BuildContext context) {
     final controller = SubscriptionController.instance;
-    // Example used
-    double progress =
-        controller.totalUsedBalance.value / controller.totalBalance.value;
+    double totalBudget = 3000; // Example total budget
+    double totalUsed = 1500; // Example used
+    double progress = totalUsed / totalBudget;
 
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Container(
@@ -93,28 +89,20 @@ class HomeView extends StatelessWidget {
           borderRadius: BorderRadius.circular(UniSizes.cardRadiusSm),
           color: HelperFunctions.isDarkMode(context)
               ? UniColors.dark
-              : UniColors.lightContainer,
+              : UniColors.light,
         ),
         child: Padding(
           padding: const EdgeInsets.all(UniSizes.md),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Obx(() {
-                if (controller.totalBalance.value >
-                    controller.totalUsedBalance.value) {
-                  return Text(
-                    "On Progress",
-                    style: Theme.of(context).textTheme.titleSmall!.apply(
-                          color: HelperFunctions.isDarkMode(context)
-                              ? UniColors.secondary
-                              : UniColors.primary,
-                        ),
-                  );
-                } else {
-                  return SizedBox.shrink(); // or show "Completed" or nothing
-                }
-              }),
+              Text(
+                "On Progress",
+                style: Theme.of(context)
+                    .textTheme
+                    .titleSmall!
+                    .apply(color: UniColors.primary),
+              ),
               const SizedBox(height: UniSizes.spaceBtwSections),
 
               // --- Progress Bar ---
@@ -124,89 +112,60 @@ class HomeView extends StatelessWidget {
                   value: progress.clamp(0.0, 1.0),
                   minHeight: 10,
                   backgroundColor: Colors.grey.shade300,
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                      HelperFunctions.isDarkMode(context)
-                          ? UniColors.secondary
-                          : UniColors.primary),
+                  valueColor: AlwaysStoppedAnimation<Color>(UniColors.primary),
                 ),
               ),
 
               const SizedBox(height: UniSizes.spaceBtwSections),
 
               // --- MONEY SECTION ---
-              Obx(() {
-                final hidden = controller.isHidden.value;
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    // TOTAL USED
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "TOTAL USED",
-                            style: Theme.of(context).textTheme.labelLarge,
-                          ),
-                          Text(
-                            hidden
-                                ? "****"
-                                : "GHC ${controller.totalUsedBalance.toStringAsFixed(2)}",
-                            style: Theme.of(context).textTheme.bodyLarge,
-                          ),
-                        ],
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // TOTAL USED
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "TOTAL USED",
+                        style: Theme.of(context).textTheme.labelLarge,
                       ),
-                    ),
-
-                    // Eye icon to toggle
-                    Expanded(
-                      child: IconButton(
-                        icon: Icon(hidden ? Iconsax.eye_slash : Iconsax.eye),
-                        onPressed: () => controller.isHidden.toggle(),
+                      Text(
+                        "GHC ${totalUsed.toStringAsFixed(2)}",
+                        style: Theme.of(context).textTheme.bodyLarge,
+                      )
+                    ],
+                  ),
+                  Icon(Iconsax.eye),
+                  // BALANCE
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "BALANCE",
+                        style: Theme.of(context).textTheme.labelLarge,
                       ),
-                    ),
-
-                    // BALANCE
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Text(
-                            "BALANCE",
-                            style: Theme.of(context).textTheme.labelLarge,
-                          ),
-                          Text(
-                            hidden
-                                ? "****"
-                                : "GHC ${controller.totalBalance.toStringAsFixed(2)}",
-                            style: Theme.of(context).textTheme.bodyLarge,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                );
-              }),
+                      Text(
+                        "GHC ${(totalBudget - totalUsed).toStringAsFixed(2)}",
+                        style: Theme.of(context).textTheme.bodyLarge,
+                      )
+                    ],
+                  ),
+                ],
+              ),
               const SizedBox(height: UniSizes.spaceBtwSections),
 
               // --- Button SECTION ---
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () => Get.to(() => const AddAccount()),
-                  child: Text("Add Account"),
+                  onPressed: () {},
+                  child: Text("Add Budget"),
                 ),
               )
             ],
           ),
         ),
-      ),
-      SizedBox(
-        height: UniSizes.spaceBtwItems,
-      ),
-      Text(
-        getFormattedDateTime(),
-        style: Theme.of(context).textTheme.labelSmall,
       )
     ]);
   }
@@ -242,60 +201,34 @@ class HomeView extends StatelessWidget {
   }
 
   Widget _buildConfirmedExpenses(SubscriptionController controller) {
-    return Obx(() {
-      if (controller.confirmedExpensesList.isEmpty) {
-        return UniAnimationLoaderWidget(
-          lottie: 'assets/lottie/empty_box.json',
-          text: "No History",
-          showAction: false,
-          width: MediaQuery.of(Get.context!).size.width * 0.4,
+    return ListView.builder(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: controller.confirmedExpensesList.length,
+      itemBuilder: (context, index) {
+        final item = controller.confirmedExpensesList[index];
+        return ConfirmedExpensesRow(
+          item: item,
+          onPressed: () => Get.to(() => SubscriptionInfoView(budget: item)),
         );
-      }
-
-      return ListView.builder(
-        physics: const NeverScrollableScrollPhysics(),
-        shrinkWrap: true,
-        itemCount: controller.confirmedExpensesList.length,
-        itemBuilder: (context, index) {
-          final item = controller.confirmedExpensesList[index];
-          return ConfirmedExpensesRow(
-            item: item,
-            onPressed: () => Get.to(() => SubscriptionInfoView(budget: item)),
-          );
-        },
-      );
-    });
+      },
+    );
   }
 
   Widget _buildPlannedExpenses(SubscriptionController controller) {
-    return Obx(() {
-      if (controller.plannedExpensesList.isEmpty) {
-        return UniAnimationLoaderWidget(
-          lottie: 'assets/lottie/empty_box.json',
-          text: "No History",
-          showAction: false,
-          width: MediaQuery.of(Get.context!).size.width * 0.4,
+    return ListView.builder(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: controller.plannedExpensesList.length,
+      itemBuilder: (context, index) {
+        final item = controller.plannedExpensesList[index];
+        return PlannedExpensesRow(
+          item: item,
+          onPressed: () {},
         );
-      }
-      return ListView.builder(
-        physics: const NeverScrollableScrollPhysics(),
-        shrinkWrap: true,
-        itemCount: controller.plannedExpensesList.length,
-        itemBuilder: (context, index) {
-          final budget = controller.plannedExpensesList[index];
-          return PlannedExpensesRow(
-            item: budget,
-            onPressed: () =>
-                SubscriptionController.instance.confirmPlannedExpense(budget),
-          );
-        },
-      );
-    });
+      },
+    );
   }
-}
-
-String getFormattedDateTime() {
-  final now = DateTime.now();
-  final formatter = DateFormat('EEE MMM d, hh:mma'); // THU AUG 7, 11:19AM
-  return formatter.format(now).toUpperCase();
 }

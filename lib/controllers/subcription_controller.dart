@@ -1,6 +1,8 @@
+import 'package:fanmint/controllers/account_controller.dart';
+import 'package:fanmint/controllers/expense_controller.dart';
 import 'package:fanmint/models/budget_model.dart';
-import 'package:fanmint/utility/popups/loaders.dart';
-import 'package:flutter/widgets.dart';
+import 'package:fanmint/models/expense_model.dart';
+import 'package:fanmint/models/momo_wallet_model.dart';
 import 'package:get/get.dart';
 import 'package:fanmint/controllers/budget_controller.dart';
 
@@ -8,30 +10,11 @@ class SubscriptionController extends GetxController {
   static SubscriptionController get instance =>
       Get.find<SubscriptionController>();
 
-  final budgetController = Get.put(BudgetController());
+  final RxBool isHidden = true.obs;
 
-  @override
-  void onInit() {
-    super.onInit();
-
-    // Watch BudgetController's expensesList for changes
-    ever<List<BudgetModel>>(budgetController.expensesList, (_) {
-      loadPlannedExpensesForToday();
-    });
-
-    everAll([monthlySpent, actualBudget], (_) {
-      calculatedBudget.value = actualBudget.value - monthlySpent.value;
-    });
-
-    // Initial population
-    loadPlannedExpensesForToday();
-  }
-
-  RxDouble monthlySpent = 0.0.obs;
-  RxDouble actualBudget = 0.0.obs;
-  RxDouble calculatedBudget = 0.0.obs;
-
-  TextEditingController setMontlyBudget = TextEditingController();
+  RxDouble totalBalance = 0.0.obs;
+  RxDouble totalUsedBalance = 0.0.obs;
+  RxDouble calculatedBalance = 0.0.obs;
 
   RxBool isSpentToday = true.obs;
 
@@ -41,101 +24,137 @@ class SubscriptionController extends GetxController {
   final confirmedExpensesList = <BudgetModel>[].obs;
   final plannedExpensesList = <BudgetModel>[].obs;
 
-  void setBudget() {
-    if (setMontlyBudget.text.trim().isEmpty ||
-        double.tryParse(setMontlyBudget.text.trim()) == null) {
-      Get.back();
-      UniLoaders.warningSnackBar(
-          title: "Error", message: "Please enter a valid budget");
-      return;
-    }
+  @override
+  void onInit() {
+    super.onInit();
 
-    actualBudget.value = double.tryParse(setMontlyBudget.text.trim()) ?? 0.0;
-    setMontlyBudget.clear();
-    Get.back();
-    UniLoaders.successSnackBar(
-        title: "Done", message: "your budget has been set");
+    // Load planned expenses on startup
+    loadPlannedExpensesForToday();
+
+    _listenToAccountChanges();
+    _listenToExpenseChanges();
+    _listenToBudgetChanges();
   }
 
-  void loadPlannedExpensesForToday() {
-    final today = DateTime.now();
-    plannedExpensesList.clear();
-
-    for (var expense in budgetController.expensesList) {
-      final start = expense.startDate;
-      final end = expense.endDate;
-
-      if (!today.isBefore(start) && !today.isAfter(end)) {
-        plannedExpensesList.add(expense);
-      }
-    }
-
-    calculateExpenseExtremes();
+  void _listenToBudgetChanges() {
+    final budgetController = BudgetController.instance;
+    ever<List<BudgetModel>>(
+        budgetController.budgetList, (_) => loadPlannedExpensesForToday());
   }
 
-  void confirmedExpense(BudgetModel item) {
-    plannedExpensesList.remove(item);
+  void _listenToAccountChanges() {
+    final accountController = AccountController.instance;
 
-    if (!confirmedExpensesList.contains(item)) {
-      confirmedExpensesList.add(item);
-    }
-
-    //Update total monthly spent
-    monthlySpent.value += item.originalSpendAmount;
-
-    UniLoaders.successSnackBar(
-      title: "Confirmed",
-      message: "${item.name} confirmed and added to your expenses",
-    );
-
-    calculateExpenseExtremes();
+    // Combine and compute totals reactively
+    ever<List<MoMoWalletModel>>(
+        accountController.momoWallets, (_) => _recalculateBalance());
   }
 
-  void unConfirmedExpense(BudgetModel item) {
-    confirmedExpensesList.remove(item);
+  void _recalculateBalance() {
+    final accountController = AccountController.instance;
+    double total = 0;
 
-    if (!plannedExpensesList.contains(item)) {
-      plannedExpensesList.add(item);
+    // Merge momo
+    for (var momo in accountController.momoWallets) {
+      total += momo.amount;
     }
 
-    // Subtract from total monthly spent
-    monthlySpent.value -= item.originalSpendAmount;
-
-    UniLoaders.successSnackBar(
-      title: "Removed",
-      message: "${item.name} has been moved back to planned expenses",
-    );
-
-    calculateExpenseExtremes();
+    totalBalance.value = total;
   }
 
-  void calculateExpenseExtremes() {
-    List<BudgetModel> allExpenses = [
-      ...plannedExpensesList,
-      ...confirmedExpensesList
-    ];
+  void _listenToExpenseChanges() {
+    final expenseController = ExpenseController.instance;
 
-    if (allExpenses.isEmpty) {
-      highestExpense.value = 0.0;
-      lowestExpense.value = 0.0;
-      return;
+    // Combine and compute totals reactively
+    ever<List<ExpenseModel>>(
+        expenseController.expensesList, (_) => _recalculateTotalUsedBalance());
+  }
+
+  void _recalculateTotalUsedBalance() {
+    final expenseController = ExpenseController.instance;
+
+    double used = 0.0;
+    for (var expense in expenseController.expensesList) {
+      used += expense.amount;
     }
 
-    allExpenses
-        .sort((a, b) => b.originalSpendAmount.compareTo(a.originalSpendAmount));
-
-    highestExpense.value = allExpenses.first.originalSpendAmount;
-    lowestExpense.value = allExpenses.last.originalSpendAmount;
+    totalUsedBalance.value = used;
+    calculatedBalance.value = totalBalance.value - totalUsedBalance.value;
   }
 
-  void resetMonthlySpent() {
-    monthlySpent.value = 0.0;
-    actualBudget.value = 0.0;
-    calculatedBudget.value = 0.0;
+  void reset() {
+    totalBalance.value = 0.0;
+    totalUsedBalance.value = 0.0;
+    calculatedBalance.value = 0.0;
     confirmedExpensesList.clear();
     plannedExpensesList.clear();
     isSpentToday.value = true;
   }
-  
 
+  void loadPlannedExpensesForToday() {
+    final today = DateTime.now();
+    final budgets = BudgetController.instance.budgetList;
+
+    plannedExpensesList.clear();
+
+    for (var budget in budgets) {
+      final start = DateTime(
+          budget.startDate.year, budget.startDate.month, budget.startDate.day);
+      final end = DateTime(
+          budget.endDate.year, budget.endDate.month, budget.endDate.day);
+      final now = DateTime(today.year, today.month, today.day);
+
+      if (now.isAtSameMomentAs(start) ||
+          now.isAtSameMomentAs(end) ||
+          (now.isAfter(start) && now.isBefore(end))) {
+        // Still active budget
+        plannedExpensesList.add(budget);
+      }
+    }
+  }
+
+  void confirmPlannedExpense(BudgetModel budget) {
+    // 1. Remove from planned
+    plannedExpensesList.remove(budget);
+
+    // 2. Add to confirmed
+    confirmedExpensesList.add(budget);
+
+    // 3. Create ExpenseModel version
+    final expense = ExpenseModel(
+      title: budget.title,
+      amount: budget.dailyCost,
+      category: "Planned",
+      accountType: "Budget",
+      date: DateTime.now(),
+    );
+
+    // 4. Add to main expense list
+    ExpenseController.instance.expensesList.add(expense);
+  }
+
+  void unconfirmExpense(BudgetModel budget) {
+    // 1. Remove from confirmed list
+    confirmedExpensesList.remove(budget);
+
+    // 2. Re-add to planned list
+    plannedExpensesList.add(budget);
+
+    // 3. Remove its matching ExpenseModel from the expense list
+    final expenseController = ExpenseController.instance;
+
+    // Find the matching expense entry based on title, amount, and date
+    final today = DateTime.now();
+    final todayOnly = DateTime(today.year, today.month, today.day);
+
+    expenseController.expensesList.removeWhere((expense) {
+      final expenseDate =
+          DateTime(expense.date.year, expense.date.month, expense.date.day);
+      return expense.title == budget.title &&
+          expense.amount == budget.dailyCost &&
+          expense.accountType == "Budget" &&
+          expense.category == "Planned" &&
+          expenseDate == todayOnly;
+    });
+  }
 }

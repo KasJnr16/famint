@@ -2,6 +2,7 @@ import 'package:fanmint/common_widget/circular_image.dart';
 import 'package:fanmint/common_widget/shimmer.dart';
 import 'package:fanmint/controllers/user/user_controller.dart';
 import 'package:fanmint/utility/constants/colors.dart';
+import 'package:fanmint/utility/constants/sizes.dart';
 import 'package:fanmint/utility/helpers/helper_functions.dart';
 import 'package:fanmint/utility/logging/logger.dart';
 import 'package:fanmint/utility/popups/loaders.dart';
@@ -81,90 +82,66 @@ class SettingsView extends StatelessWidget {
       backgroundColor: dark ? TColor.gray : UniColors.white,
       body: SingleChildScrollView(
         child: SafeArea(
-          child: Column(children: [
-            Stack(
-              alignment: Alignment.center,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    IconButton(
+          child: Padding(
+            padding: const EdgeInsets.all(UniSizes.defaultSpace),
+            child: Column(children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  IconButton(
                       onPressed: () => Get.back(),
-                      icon: Image.asset("assets/img/back.png",
-                          width: 25, height: 25, color: TColor.gray30),
-                    )
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "Settings",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    )
-                  ],
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            Obx(
-              () {
-                final networkImage =
-                    userController.currentUser.value.profilePicture;
-                final image = networkImage.isNotEmpty
-                    ? networkImage
-                    : "assets/img/u1.png";
-
-                return userController.imageUploading.value
-                    ? const UniShimmerEffect(width: 70, height: 60, radius: 50)
-                    : UniCircularImage(
-                        padding: 0,
-                        isNetworkImage: networkImage.isNotEmpty,
-                        imageUrl: image,
-                        width: 70,
-                        height: 70,
-                      );
-              },
-            ),
-            const SizedBox(height: 8),
-            Obx(
-              () => Text(userController.currentUser.value.fullname,
-                  style: TextStyle(fontWeight: FontWeight.w700)),
-            ),
-            const SizedBox(height: 4),
-            Obx(
-              () => Text(userController.currentUser.value.email,
-                  style: TextStyle(
-                      color: TColor.gray30,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500)),
-            ),
-            const SizedBox(height: 15),
-            InkWell(
-              borderRadius: BorderRadius.circular(15),
-              onTap: () {},
-              child: Container(
-                padding: const EdgeInsets.all(6),
-                decoration: BoxDecoration(
-                  border: Border.all(color: TColor.border.withOpacity(0.15)),
-                  color: dark
-                      ? TColor.gray60.withOpacity(0.2)
-                      : UniColors.lightContainer,
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                child: TextButton(
-                    child: Text("Edit profile",
-                        style: TextStyle(
-                            fontSize: 12, fontWeight: FontWeight.w600)),
-                    onPressed: () => Get.to(() => ProfileView())),
+                      color: HelperFunctions.isDarkMode(context)
+                          ? UniColors.secondary
+                          : UniColors.primary,
+                      icon: Icon(Icons.arrow_back)),
+                  Text(
+                    "Settings",
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  ),
+                ],
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-              child: Column(
+              const SizedBox(height: 20),
+              Obx(
+                () {
+                  final networkImage =
+                      userController.currentUser.value.profilePicture;
+                  final image = networkImage.isNotEmpty
+                      ? networkImage
+                      : "assets/img/u1.png";
+
+                  return userController.imageUploading.value
+                      ? const UniShimmerEffect(
+                          width: 70, height: 60, radius: 50)
+                      : UniCircularImage(
+                          padding: 0,
+                          isNetworkImage: networkImage.isNotEmpty,
+                          imageUrl: image,
+                          width: 70,
+                          height: 70,
+                        );
+                },
+              ),
+              const SizedBox(height: UniSizes.spaceBtwItems),
+              Obx(() => userController.profileLoading.value
+                  ? UniShimmerEffect(width: 100, height: 20)
+                  : Text(
+                      userController.currentUser.value.fullname,
+                      style: Theme.of(context).textTheme.titleLarge,
+                    )),
+              const SizedBox(height: 4),
+              Obx(
+                () => userController.profileLoading.value
+                    ? UniShimmerEffect(width: 120, height: 15)
+                    : Text(userController.currentUser.value.email,
+                        style: Theme.of(context).textTheme.labelLarge),
+              ),
+              const SizedBox(height: UniSizes.spaceBtwItems),
+              TextButton(
+                onPressed: () => Get.to(() => ProfileView()),
+                child: Text("Edit Profile"),
+              ),
+              Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _sectionTitle("General"),
@@ -189,9 +166,6 @@ class SettingsView extends StatelessWidget {
                           value: controller.isActive.value,
                           didChange: controller.toggleSync,
                         )),
-                  ]),
-                  _sectionTitle("My subscription"),
-                  _settingContainer(dark, const [
                     IconItemRow(
                         title: "Default currency",
                         icon: "assets/img/money.png",
@@ -203,10 +177,12 @@ class SettingsView extends StatelessWidget {
                     [
                       IconItemSwitchRow(
                         title: "Theme",
+                      
                         icon: "assets/img/light_theme.png",
                         value: Provider.of<UniThemeProvider>(context,
                                 listen: false)
                             .isDarkMode,
+                            
                         didChange: (value) => Provider.of<UniThemeProvider>(
                                 context,
                                 listen: false)
@@ -219,18 +195,21 @@ class SettingsView extends StatelessWidget {
                     ],
                   ),
                   SizedBox(
-                    height: 12,
+                    height: UniSizes.spaceBtwItems,
                   ),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                        onPressed: userController.logoutWarningPopUp,
-                        child: Text("LogOut")),
-                  )
                 ],
-              ),
-            )
-          ]),
+              )
+            ]),
+          ),
+        ),
+      ),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(UniSizes.defaultSpace),
+        child: SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+              onPressed: userController.logoutWarningPopUp,
+              child: Text("LogOut")),
         ),
       ),
     );

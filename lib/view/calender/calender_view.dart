@@ -1,5 +1,7 @@
+import 'package:fanmint/common_widget/animation_loader.dart';
 import 'package:fanmint/utility/constants/colors.dart';
 import 'package:fanmint/utility/helpers/helper_functions.dart';
+import 'package:fanmint/view/add_budget/add_budget_view.dart';
 import 'package:fanmint/view/subscription_info/subscription_info_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -7,7 +9,6 @@ import 'package:calendar_agenda/calendar_agenda.dart';
 
 import 'package:fanmint/common/color_extension.dart';
 import 'package:fanmint/common_widget/subscription_cell.dart';
-import 'package:fanmint/view/settings/settings_view.dart';
 import '../../controllers/calendar_controller.dart';
 
 class CalenderView extends StatelessWidget {
@@ -41,46 +42,11 @@ class CalenderView extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Stack(
-                                alignment: Alignment.center,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        "Calender",
-                                        style: TextStyle(
-                                          color: dark ? TColor.gray30 : null,
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      const Spacer(),
-                                      IconButton(
-                                        onPressed: () {
-                                          Get.to(() => const SettingsView());
-                                        },
-                                        icon: Image.asset(
-                                            "assets/img/settings.png",
-                                            width: 25,
-                                            height: 70,
-                                            color: dark
-                                                ? TColor.white
-                                                : UniColors.dark),
-                                      )
-                                    ],
-                                  )
-                                ],
-                              ),
                               const SizedBox(height: 20),
                               Text(
                                 "Subs\nSchedule",
-                                style: TextStyle(
-                                    fontSize: 40, fontWeight: FontWeight.bold),
+                                style:
+                                    Theme.of(context).textTheme.headlineMedium,
                               ),
                               const SizedBox(height: 15),
                               Row(
@@ -88,7 +54,7 @@ class CalenderView extends StatelessWidget {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    "${controller.subArr.length} subscription(s) for today",
+                                    "${controller.budgetList.length} Expense(s) for today",
                                     style: TextStyle(
                                         color: dark ? TColor.gray30 : null,
                                         fontSize: 14,
@@ -188,7 +154,7 @@ class CalenderView extends StatelessWidget {
                                 fontSize: 20, fontWeight: FontWeight.bold),
                           ),
                           Obx(() => Text(
-                                "\$${controller.dailyTotal.value.toStringAsFixed(2)}",
+                                "GHC ${controller.dailyTotal.value.toStringAsFixed(2)}",
                                 style: TextStyle(
                                     fontSize: 20, fontWeight: FontWeight.bold),
                               ))
@@ -206,7 +172,7 @@ class CalenderView extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            "bills",
+                            "amount",
                             style: TextStyle(
                                 color: TColor.gray30,
                                 fontSize: 12,
@@ -218,25 +184,40 @@ class CalenderView extends StatelessWidget {
                   ),
                 ),
 
-                /// Subscriptions Grid
-                GridView.builder(
-                  physics: const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 8,
-                      mainAxisSpacing: 8,
-                      childAspectRatio: 1),
-                  itemCount: controller.subArr.length,
-                  itemBuilder: (context, index) {
-                    final sObj = controller.subArr[index];
-                    return SubScriptionCell(
-                      sObj: sObj,
-                      onPressed: () => Get.to(() => SubscriptionInfoView(item: sObj)),
+                Obx(() {
+                  final budgets = controller.budgetList;
+                  if (budgets.isEmpty) {
+                    return UniAnimationLoaderWidget(
+                      lottie: 'assets/lottie/empty_box.json',
+                      text: "No transaction History",
+                      showAction: true,
+                      actionText: "Add some",
+                      onActionPressed: () => Get.to(() => AddBudgetView()),
                     );
-                  },
-                ),
+                  }
+
+                   /// Subscriptions Grid
+                  return GridView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3,
+                            crossAxisSpacing: 8,
+                            mainAxisSpacing: 8,
+                            childAspectRatio: 1),
+                    itemCount: controller.budgetList.length,
+                    itemBuilder: (context, index) {
+                      final budget = controller.budgetList[index];
+                      return SubScriptionCell(
+                        budget: budget,
+                        onPressed: () =>
+                            Get.to(() => SubscriptionInfoView(budget: budget)),
+                      );
+                    },
+                  );
+                }),
 
                 const SizedBox(height: 130),
               ],

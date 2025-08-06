@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class TColor {
-  static Color get primary => const Color.fromARGB(255, 24, 163, 89);
+  static Color get primary => Color.fromARGB(255, 13, 169, 60);
   static Color get primary500 => const Color.fromARGB(255, 51, 188, 74);
   static Color get primary20 => const Color.fromARGB(255, 24, 163, 89);
   static Color get primary10 => const Color.fromARGB(255, 36, 166, 218);

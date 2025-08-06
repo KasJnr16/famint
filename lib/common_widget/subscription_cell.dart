@@ -6,11 +6,11 @@ import 'package:flutter/material.dart';
 import '../common/color_extension.dart';
 
 class SubScriptionCell extends StatelessWidget {
-  final BudgetModel sObj;
+  final BudgetModel budget;
   final VoidCallback onPressed;
 
   const SubScriptionCell(
-      {super.key, required this.sObj, required this.onPressed});
+      {super.key, required this.budget, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -31,16 +31,15 @@ class SubScriptionCell extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Spacer(),
             Text(
-              sObj.name,
+              budget.title,
               style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
             ),
             const SizedBox(
               width: 8,
             ),
             Text(
-              "\$${sObj.originalSpendAmount}",
+              "GHC ${budget.dailyCost}",
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
             )
           ],

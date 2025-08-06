@@ -303,7 +303,6 @@ class CalendarAgendaState extends State<CalendarAgenda>
   void showFullCalendar() {
     showModalBottomSheet<void>(
       context: context,
-      isScrollControlled: true,
       backgroundColor: Theme.of(context).brightness == Brightness.dark
           ? widget.fullCalendarBackgroundColor
           : Colors.white,

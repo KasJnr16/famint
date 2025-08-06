@@ -1,15 +1,15 @@
 import 'package:fanmint/utility/constants/colors.dart';
 import 'package:fanmint/utility/helpers/helper_functions.dart';
-import 'package:fanmint/view/add_subscription/add_subscription_view.dart';
+import 'package:fanmint/view/add_budget/add_budget_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get/utils.dart';
 import '../../common/color_extension.dart';
 import '../calender/calender_view.dart';
-import '../card/cards_view.dart';
+import '../help/help.dart';
 import '../home/home_view.dart';
-import '../spending_budgets/spending_budgets_view.dart';
+import '../track_budgets/track_expense_view.dart';
 
 class MainTabView extends StatefulWidget {
   const MainTabView({super.key});
@@ -55,74 +55,149 @@ class _MainTabViewState extends State<MainTabView> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
-                            IconButton(
-                              onPressed: () {
+                            GestureDetector(
+                              onTap: () {
                                 setState(() {
                                   selectTab = 0;
                                   currentTabView = const HomeView();
                                 });
                               },
-                              icon: Image.asset(
-                                "assets/img/home.png",
-                                width: 20,
-                                height: 20,
-                                color: selectTab == 0
-                                    ? TColor.primary
-                                    : TColor.gray30,
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Image.asset(
+                                    "assets/img/home.png",
+                                    width: 20,
+                                    height: 20,
+                                    color: selectTab == 0
+                                        ? HelperFunctions.isDarkMode(context)
+                                            ? UniColors.secondary
+                                            : UniColors.primary
+                                        : TColor.gray30,
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    "Home",
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      color: selectTab == 0
+                                          ? HelperFunctions.isDarkMode(context)
+                                              ? UniColors.secondary
+                                              : UniColors.primary
+                                          : TColor.gray30,
+                                    ),
+                                  )
+                                ],
                               ),
                             ),
-                            IconButton(
-                              onPressed: () {
+                            GestureDetector(
+                              onTap: () {
                                 setState(() {
                                   selectTab = 1;
-                                  currentTabView = const SpendingBudgetsView();
+                                  currentTabView = const TrackExpenseView();
                                 });
                               },
-                              icon: Image.asset(
-                                "assets/img/budgets.png",
-                                width: 20,
-                                height: 20,
-                                color: selectTab == 1
-                                    ? TColor.primary
-                                    : TColor.gray30,
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Image.asset(
+                                    "assets/img/budgets.png",
+                                    width: 20,
+                                    height: 20,
+                                    color: selectTab == 1
+                                        ? HelperFunctions.isDarkMode(context)
+                                            ? UniColors.secondary
+                                            : UniColors.primary
+                                        : TColor.gray30,
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    "Track",
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      color: selectTab == 1
+                                          ? HelperFunctions.isDarkMode(context)
+                                              ? UniColors.secondary
+                                              : UniColors.primary
+                                          : TColor.gray30,
+                                    ),
+                                  )
+                                ],
                               ),
                             ),
                             const SizedBox(
                               width: 50,
                               height: 50,
                             ),
-                            IconButton(
-                              onPressed: () {
+                            GestureDetector(
+                              onTap: () {
                                 setState(() {
                                   selectTab = 2;
                                   currentTabView = CalenderView();
                                 });
                               },
-                              icon: Image.asset(
-                                "assets/img/calendar.png",
-                                width: 20,
-                                height: 20,
-                                color: selectTab == 2
-                                    ? TColor.primary
-                                    : TColor.gray30,
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Image.asset(
+                                    "assets/img/calendar.png",
+                                    width: 20,
+                                    height: 20,
+                                    color: selectTab == 2
+                                        ? HelperFunctions.isDarkMode(context)
+                                            ? UniColors.secondary
+                                            : UniColors.primary
+                                        : TColor.gray30,
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    "Calendar",
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      color: selectTab == 2
+                                          ? HelperFunctions.isDarkMode(context)
+                                              ? UniColors.secondary
+                                              : UniColors.primary
+                                          : TColor.gray30,
+                                    ),
+                                  )
+                                ],
                               ),
                             ),
-                            IconButton(
-                              onPressed: () {
+                            GestureDetector(
+                              onTap: () {
                                 setState(() {
                                   selectTab = 3;
-                                  currentTabView = const CardsView();
+                                  currentTabView = const HelpView();
                                 });
                               },
-                              icon: Image.asset(
-                                "assets/img/creditcards.png",
-                                width: 20,
-                                height: 20,
-                                color: selectTab == 3
-                                    ? TColor.primary
-                                    : TColor.gray30,
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.help_outline,
+                                    size: 25,
+                                    color: selectTab == 3
+                                        ? HelperFunctions.isDarkMode(context)
+                                            ? UniColors.secondary
+                                            : UniColors.primary
+                                        : TColor.gray30,
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    "Help",
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      color: selectTab == 3
+                                          ? HelperFunctions.isDarkMode(context)
+                                              ? UniColors.secondary
+                                              : UniColors.primary
+                                          : TColor.gray30,
+                                    ),
+                                  )
+                                ],
                               ),
-                            ),
+                            )
                           ],
                         )
                       ],
@@ -131,7 +206,9 @@ class _MainTabViewState extends State<MainTabView> {
                       margin: const EdgeInsets.all(20),
                       decoration: BoxDecoration(boxShadow: [
                         BoxShadow(
-                            color: TColor.primary0.withOpacity(0.25),
+                            color: HelperFunctions.isDarkMode(context)
+                                ? UniColors.secondary.withOpacity(0.5)
+                                : UniColors.primary.withOpacity(0.5),
                             blurRadius: 20,
                             offset: const Offset(0, 4))
                       ], borderRadius: BorderRadius.circular(50)),
@@ -140,12 +217,14 @@ class _MainTabViewState extends State<MainTabView> {
                         height: 70,
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(50),
-                            color: TColor.primary),
+                            color: HelperFunctions.isDarkMode(context)
+                                ? UniColors.secondary
+                                : UniColors.primary),
                         child: IconButton(
                             iconSize: 35,
                             color: TColor.white,
                             onPressed: () {
-                              Get.to(() => AddSubScriptionView());
+                              Get.to(() => AddBudgetView());
                             },
                             icon: const Icon(Icons.add)),
                       ),

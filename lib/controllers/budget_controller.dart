@@ -1,107 +1,77 @@
-import 'package:fanmint/common_widget/custom_arc_180_painter.dart';
 import 'package:fanmint/models/budget_model.dart';
+import 'package:fanmint/utility/device/network_manager.dart';
+import 'package:fanmint/utility/popups/fullscreen_loader.dart';
 import 'package:fanmint/utility/popups/loaders.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class BudgetController extends GetxController {
-  static BudgetController get instance => Get.find<BudgetController>();
-  final expensesList = <BudgetModel>[].obs;
+  static BudgetController get instance => Get.find();
 
-  final name = TextEditingController();
+  final GlobalKey<FormState> budgetFormKey = GlobalKey<FormState>();
+
+  // --- Text Controllers ---
+  final title = TextEditingController();
   final description = TextEditingController();
-  final spendAmount = TextEditingController();
+  final dailyCost = TextEditingController();
 
-  Rx<DateTime?> startDate = Rx<DateTime?>(null);
-  Rx<DateTime?> endDate = Rx<DateTime?>(null);
+  // --- Budget State ---
+  Rx<MaterialColor> selectedColor = Colors.blue.obs;
 
-  clear() {
-    name.clear();
-    spendAmount.clear();
-    description.clear();
-    startDate.value = null;
-    endDate.value = null;
-  }
+  Rx<DateTime> startDate = DateTime.now().obs;
+  Rx<DateTime> endDate = DateTime.now().add(Duration(days: 30)).obs;
 
-  void addNewExpense({required double totalBudget, required Color color}) {
-    if (totalBudget <= 0) {
-      Get.back();
-      UniLoaders.warningSnackBar(
-          title: "Invalid Budget",
-          message: "Total budget must be greater than zero");
-      return;
-    }
-    final n = name.text.trim();
-    final des = description.text.trim();
-    final amt = double.tryParse(spendAmount.text.trim()) ?? 0.0;
-    var start = startDate.value;
-    var end = endDate.value;
-    end ??= start;
+  final RxList<BudgetModel> budgetList = <BudgetModel>[].obs;
 
-    if (n.isEmpty) {
-      UniLoaders.warningSnackBar(
-          title: "Invalid Input", message: "Expense name cannot be empty");
-      return;
-    }
+  void addBudget() async {
+    try {
+      UniFullScreenLoader.openLoadingDialog("Saving Budget...");
 
-    if (amt <= 0) {
-      UniLoaders.warningSnackBar(
-          title: "Invalid Amount",
-          message: "Amount per day must be greater than zero");
-      return;
-    }
+      final isConnected = await NetworkManager.instance.isConnected();
+      if (!isConnected) {
+        UniFullScreenLoader.stopLoading();
+        return;
+      }
 
-    if (start == null || end == null) {
-      UniLoaders.warningSnackBar(
-          title: "Missing Dates",
-          message: "Start and End dates must be selected");
-      return;
-    }
+      if (!budgetFormKey.currentState!.validate()) {
+        UniFullScreenLoader.stopLoading();
+        return;
+      }
 
-    if (end.isBefore(start)) {
-      UniLoaders.warningSnackBar(
-          title: "Invalid Dates",
-          message: "End date cannot be before start date");
-      return;
-    }
+      final daily = double.tryParse(dailyCost.text.trim()) ?? 0;
+      final int days = endDate.value.difference(startDate.value).inDays + 1;
+      final monthly = daily * 30;
+      final total = daily * days;
 
-    final totalDays = end.difference(start).inDays + 1;
-    final totalSpend = amt * totalDays;
-
-    if (totalSpend > totalBudget) {
-      UniLoaders.warningSnackBar(
-        title: "Budget Exceeded",
-        message:
-            "Total spending (GHC ${totalSpend.toStringAsFixed(2)}) exceeds your budget of GHC ${totalBudget.toStringAsFixed(2)}",
+      final newBudget = BudgetModel(
+        title: title.text.trim(),
+        description: description.text.trim(),
+        dailyCost: daily,
+        monthlyPlanned: monthly,
+        totalBudget: total,
+        remaining: total,
+        colorTag: selectedColor.value,
+        startDate: startDate.value,
+        endDate: endDate.value,
       );
-      return;
+
+      budgetList.add(newBudget);
+      clearForm();
+
+      UniFullScreenLoader.stopLoading();
+      UniLoaders.successSnackBar(title: "Success", message: "Budget saved!");
+    } catch (e) {
+      UniFullScreenLoader.stopLoading();
+      UniLoaders.errorSnackBar(title: "Error", message: e.toString());
     }
-
-    final leftAmount = totalBudget - totalSpend;
-
-    expensesList.add(
-      BudgetModel(
-        name: n,
-        description: des,
-        originalSpendAmount: amt,
-        monthlyExpenseAmount: totalSpend,
-        totalMonthlyBudget: totalBudget,
-        leftAmount: leftAmount,
-        startDate: start,
-        endDate: end,
-        color: color,
-      ),
-    );
-
-    clear();
-    Get.back();
-    UniLoaders.successSnackBar(message: "Expense added successfully");
   }
 
-  List<ArcValueModel> get arcValues => expensesList
-      .map((e) => ArcValueModel(
-          color: e.color,
-          value: (e.monthlyExpenseAmount / e.totalMonthlyBudget * 100)
-              .clamp(0.0, 100.0)))
-      .toList();
+  void clearForm() {
+    title.clear();
+    description.clear();
+    dailyCost.clear();
+    selectedColor.value = Colors.blue;
+    startDate.value = DateTime.now();
+    endDate.value = DateTime.now().add(Duration(days: 30));
+  }
 }

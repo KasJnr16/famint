@@ -10,7 +10,7 @@ class CalendarController extends GetxController {
   final selectedDate = DateTime.now().obs;
   final random = Random();
 
-  final subArr = <BudgetModel>[].obs;
+  final budgetList = <BudgetModel>[].obs;
   final dailyTotal = 0.0.obs;
 
   final budgetController = BudgetController.instance;
@@ -19,10 +19,6 @@ class CalendarController extends GetxController {
   void onInit() {
     super.onInit();
     _loadExpensesForSelectedDate();
-    // Listen to changes in the budgetController's expensesList
-    ever<List<BudgetModel>>(budgetController.expensesList, (_) {
-      _loadExpensesForSelectedDate();
-    });
   }
 
   List<DateTime> get events => List.generate(
@@ -37,18 +33,26 @@ class CalendarController extends GetxController {
   }
 
   void _loadExpensesForSelectedDate() {
-    final date = selectedDate.value;
-    final matchedExpenses = budgetController.expensesList.where((expense) {
-      return !date.isBefore(expense.startDate) &&
-          !date.isAfter(expense.endDate);
+    final selected = DateTime(
+      selectedDate.value.year,
+      selectedDate.value.month,
+      selectedDate.value.day,
+    );
+
+    final List<BudgetModel> allBudgets = budgetController.budgetList;
+
+    final matchingBudgets = allBudgets.where((budget) {
+      final start = DateTime(
+          budget.startDate.year, budget.startDate.month, budget.startDate.day);
+      final end = DateTime(
+          budget.endDate.year, budget.endDate.month, budget.endDate.day);
+      return selected.isAtSameMomentAs(start) ||
+          selected.isAtSameMomentAs(end) ||
+          (selected.isAfter(start) && selected.isBefore(end));
     }).toList();
 
-    subArr.value = matchedExpenses;
-
-    dailyTotal.value = matchedExpenses.fold(
-      0.0,
-      (sum, e) => sum + e.originalSpendAmount,
-    );
+    budgetList.value = matchingBudgets;
+    dailyTotal.value = matchingBudgets.fold(0.0, (sum, b) => sum + b.dailyCost);
   }
 }
 

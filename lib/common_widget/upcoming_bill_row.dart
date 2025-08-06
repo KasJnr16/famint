@@ -1,4 +1,3 @@
-import 'package:fanmint/controllers/subcription_controller.dart';
 import 'package:fanmint/models/budget_model.dart';
 import 'package:fanmint/utility/constants/colors.dart';
 import 'package:fanmint/utility/constants/sizes.dart';
@@ -75,7 +74,7 @@ class PlannedExpensesRow extends StatelessWidget {
               //name
               Expanded(
                 child: Text(
-                  item.name,
+                  item.title,
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
                 ),
               ),
@@ -85,15 +84,15 @@ class PlannedExpensesRow extends StatelessWidget {
 
               // amount
               Text(
-                "\$${item.originalSpendAmount}",
+                "GHC ${item.dailyCost}",
                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
               ),
               SizedBox(
                 width: UniSizes.spaceBtwItems,
               ),
-              //  butn
+              
               TextButton(
-                onPressed: () {SubscriptionController.instance.confirmedExpense(item);},
+                onPressed: onPressed,
                 style: TextButton.styleFrom(
                   foregroundColor: TColor.primary,
                   minimumSize: const Size(0, 32),

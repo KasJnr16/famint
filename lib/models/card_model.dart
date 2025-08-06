@@ -1,23 +1,13 @@
 class CardModel {
-  final String name;
-  final String number;
-  final String monthYear;
+  final String cardName;
+  final String cardCvc;
+  final String cardNumber;
+  final String expiryDate;
 
   CardModel({
-    required this.name,
-    required this.number,
-    required this.monthYear,
+    required this.cardName,
+    required this.cardNumber,
+    required this.cardCvc,
+    required this.expiryDate,
   });
-
-  Map<String, dynamic> toJson() => {
-        "name": name,
-        "number": number,
-        "month_year": monthYear,
-      };
-
-  factory CardModel.fromJson(Map<String, dynamic> json) => CardModel(
-        name: json["name"],
-        number: json["number"],
-        monthYear: json["month_year"],
-      );
 }

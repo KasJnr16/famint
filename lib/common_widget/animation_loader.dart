@@ -1,22 +1,24 @@
 import 'package:fanmint/utility/constants/colors.dart';
 import 'package:fanmint/utility/constants/sizes.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 
 class UniAnimationLoaderWidget extends StatelessWidget {
   const UniAnimationLoaderWidget({
     super.key,
     this.text,
-    required this.animation,
+    this.animation,
     this.showAction = false,
     this.actionText,
     this.onActionPressed,
     this.height,
     this.width,
     this.color,
+    this.lottie,
   });
 
   final String? text;
-  final String animation;
+  final String? animation, lottie;
   final double? height, width;
   final bool showAction;
   final String? actionText;
@@ -32,17 +34,18 @@ class UniAnimationLoaderWidget extends StatelessWidget {
       child: Center(
         child: Column(
           children: [
-            // Lottie.asset(animation, width: MediaQuery.of(context).size.width * 0.8),
-            // const SizedBox(height: UniSizes.defaultSpace),
-            Center(
-              child: Image.asset(
-                // Display the GIF instead of Lottie animation
-                color: color,
-                animation,
-                width: width ?? MediaQuery.of(context).size.width * 0.7,
-                height: height,
-              ),
-            ),
+            lottie != null
+                ? Lottie.asset(lottie!,
+                    width: width ?? MediaQuery.of(context).size.width * 0.6)
+                : Center(
+                    child: Image.asset(
+                      // Display the GIF instead of Lottie animation
+                      color: color,
+                      animation!,
+                      width: width ?? MediaQuery.of(context).size.width * 0.7,
+                      height: height,
+                    ),
+                  ),
             const SizedBox(height: UniSizes.defaultSpace),
 
             //
