@@ -1,4 +1,3 @@
-import 'package:fanmint/common/color_extension.dart';
 import 'package:fanmint/controllers/login/re_authenticate_user_login_form.dart';
 import 'package:fanmint/models/user_model.dart';
 import 'package:fanmint/repositories/authentication/authentication_repository.dart';
@@ -25,7 +24,6 @@ class UserController extends GetxController {
   final profileLoading = false.obs;
   Rx<UserModel> currentUser = UserModel.empty().obs;
   Rx<UserModel> otherUser = UserModel.empty().obs;
-  RxList<UserModel> agents = <UserModel>[].obs;
 
   final verifyEmail = TextEditingController();
   final verifyPassword = TextEditingController();

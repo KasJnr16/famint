@@ -11,7 +11,6 @@ import 'package:get/get.dart';
 import 'package:fanmint/common/color_extension.dart';
 import 'package:fanmint/utility/constants/colors.dart';
 import 'package:fanmint/utility/helpers/helper_functions.dart';
-import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:iconsax/iconsax.dart';
 import '../../common_widget/segment_button.dart';
 import '../../common_widget/subscription_home_row.dart';
