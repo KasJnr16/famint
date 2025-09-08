@@ -1,0 +1,104 @@
+name: fanmint
+description: A new Flutter project.
+publish_to: 'none' # 
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.5 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  
+  flutter_native_splash:
+  logger:
+  connectivity_plus:
+  lottie:
+
+  cupertino_icons: ^1.0.2
+  dotted_border: ^2.0.0+3
+  intl: ^0.18.0
+  calendar_agenda:
+    path: dev_lib/calendar_agenda
+  carousel_slider:
+  card_swiper:
+    path: dev_lib/card_swiper
+  iconsax:
+  provider: ^6.1.2
+  shimmer: ^3.0.0
+  cached_network_image: ^3.4.1
+
+  local_auth:
+
+  # State Management
+  get: 
+  get_storage: 
+
+
+  uuid: ^4.5.1  
+  fl_chart:
+
+  file_picker: ^9.0.1
+  image_picker: ^1.1.2
+
+  firebase_core: 
+  firebase_auth: ^5.5.0
+  google_sign_in: ^6.2.2
+  firebase_storage: ^12.3.3
+  cloud_firestore:
+
+  paystack_payment: ^0.0.4
+  http: ^1.2.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  flutter_launcher_icons: "^0.14.1"
+  
+  # Splash Screen
+flutter_native_splash:
+  android: true
+  ios: true
+  web: false
+
+  color: "#0CDD58"
+  color_dark: "#272727"
+  image: assets/img/app_logo_no_background.png
+  image_dark: assets/img/app_logo_no_background.png
+  
+  android_12:
+    color: "#0CDD58"
+    color_dark: "#272727"
+    image: assets/img/app_logo_no_background.png
+    image_dark: assets/img/app_logo_no_background.png
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/img/app_logo.png"
+  adaptive_icon_background: "#0CDD58"
+  adaptive_icon_foreground: "assets/img/app_logo_no_background.png"
+  remove_alpha_ios: true  
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/img/
+    - assets/lottie/
+  fonts:
+    - family: Inter
+      fonts:
+        - asset: assets/font/Inter-Regular.ttf
+        - asset: assets/font/Inter-Medium.ttf
+          weight: 500
+        - asset: assets/font/Inter-SemiBold.ttf
+          weight: 600
+        - asset: assets/font/Inter-Bold.ttf
+          weight: 700
+  #
+  # For details regarding fonts from package dependencies,
+  # see https://flutter.dev/custom-fonts/#from-packages

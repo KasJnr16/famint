@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "336379495349",
+    "project_id": "fanmint-9473e",
+    "storage_bucket": "fanmint-9473e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:336379495349:android:c7153b42c5a73d6eec0ffc",
+        "android_client_info": {
+          "package_name": "com.example.fanmint"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "336379495349-s4tehher06npa1idv5erpmmbp4ev9r8r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBJ8YilrOJQXpvzc6vTGuZsdZeQiZF4s7c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "336379495349-s4tehher06npa1idv5erpmmbp4ev9r8r.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
