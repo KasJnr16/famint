@@ -6,6 +6,7 @@ import 'package:fanmint/models/momo_wallet_model.dart';
 import 'package:fanmint/models/savings_account_model.dart';
 import 'package:fanmint/utility/constants/colors.dart';
 import 'package:fanmint/utility/constants/sizes.dart';
+import 'package:fanmint/utility/popups/fullscreen_loader.dart';
 import 'package:fanmint/utility/popups/loaders.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -83,86 +84,90 @@ class _SavingsTransactionFormState extends State<SavingsTransactionForm> {
                 backgroundColor: widget.isTopUp ? null : UniColors.error,
               ),
               onPressed: () async {
-                final user = UserController.instance.currentUser.value;
-                if (selectedFunding == null || amountController.text.isEmpty) {
-                  UniLoaders.warningSnackBar(
+                UniFullScreenLoader.openLoadingDialog("Processing...");
+                try {
+                  final user = UserController.instance.currentUser.value;
+
+                  if (selectedFunding == null ||
+                      amountController.text.isEmpty) {
+                    UniLoaders.warningSnackBar(
                       message:
-                          "Select savings, funding source, and enter amount.");
-                  return;
-                }
+                          "Select savings, funding source, and enter amount.",
+                    );
+                    return;
+                  }
 
-                final amount = double.tryParse(amountController.text.trim());
-                if (amount == null || amount <= 0) {
-                  UniLoaders.warningSnackBar(message: "Enter a valid amount.");
-                  return;
-                }
+                  final amount = double.tryParse(amountController.text.trim());
+                  if (amount == null || amount <= 0) {
+                    UniLoaders.warningSnackBar(
+                        message: "Enter a valid amount.");
+                    return;
+                  }
 
-                if (widget.isTopUp) {
-                  // ✅ Top Up
-                  final success = await PaymentController.instance.makePayment(
+                  if (widget.isTopUp) {
+                    // ✅ Top Up
+                    final success =
+                        await PaymentController.instance.makePayment(
                       customerEmail: user.email,
                       customerFullname: user.fullname,
                       amount: amount,
-                      context: context);
-
-                  if (!success) {
-                    UniLoaders.errorSnackBar(
-                      title: "Payment Failed",
-                      message: "Payment was not successful. Please try again.",
+                      context: context,
                     );
-                    return;
-                  }
 
-                  await savingsController.topUp(widget.account, amount);
-                  UniLoaders.successSnackBar(
-                    message:
-                        "Top Up of ₵${amount.toStringAsFixed(2)} successful.",
-                  );
-                } else {
-                  // ✅ Withdraw
-                  final today = DateTime.now();
-                  if (today.isBefore(widget.account.targetDate!)) {
-                    UniLoaders.warningSnackBar(
-                      title: "Not Allowed",
+                    await savingsController.topUp(widget.account, amount);
+                    UniLoaders.successSnackBar(
                       message:
-                          "You can only withdraw after ${widget.account.targetDate!.toLocal().toString().split(' ')[0]}.",
-                    );
-                    return;
-                  }
-
-                  bool withdrawalSuccess = false;
-
-                  if (selectedFunding is MoMoWalletModel) {
-                    // Handle MoMo withdrawal
-                    withdrawalSuccess =
-                        await PaymentController.instance.withdrawToMoMo(
-                      momoNumber: selectedFunding.phoneNumber,
-                      network:
-                          selectedFunding.network, // MTN, VODAFONE, AIRTELTIGO
-                      accountName: user.fullname,
-                      amount: amount,
+                          "Top Up of ₵${amount.toStringAsFixed(2)} successful.",
                     );
                   } else {
-                    // Handle Bank withdrawal
-                    withdrawalSuccess =
-                        await PaymentController.instance.withdraw(
-                      bankCode: selectedFunding.bankCode,
-                      accountNumber: selectedFunding.accountNumber,
-                      accountName: selectedFunding.accountName,
-                      amount: amount,
-                    );
-                  }
+                    // ✅ Withdraw
+                    final today = DateTime.now();
+                    if (today.isBefore(widget.account.targetDate!)) {
+                      UniLoaders.warningSnackBar(
+                        title: "Not Allowed",
+                        message:
+                            "You can only withdraw after ${widget.account.targetDate!.toLocal().toString().split(' ')[0]}.",
+                      );
+                      return;
+                    }
 
-                  if (withdrawalSuccess) {
+                    bool withdrawalSuccess = false;
+                    if (selectedFunding is MoMoWalletModel) {
+                      withdrawalSuccess =
+                          await PaymentController.instance.withdrawToMoMo(
+                        momoNumber: selectedFunding.phoneNumber,
+                        network: selectedFunding.network,
+                        accountName: user.fullname,
+                        amount: amount,
+                      );
+                    } else {
+                      withdrawalSuccess =
+                          await PaymentController.instance.withdraw(
+                        bankCode: selectedFunding.bankCode,
+                        accountNumber: selectedFunding.accountNumber,
+                        accountName: selectedFunding.accountName,
+                        amount: amount,
+                      );
+                    }
+
+                    if (!withdrawalSuccess) {
+                      UniLoaders.warningSnackBar(message: "Withdrawal failed.");
+                      return;
+                    }
+
                     await savingsController.withdraw(widget.account, amount);
                     UniLoaders.successSnackBar(
                       message:
                           "Withdrawal of ₵${amount.toStringAsFixed(2)} successful.",
                     );
                   }
-                }
 
-                Get.back();
+                  Get.back();
+                } catch (e) {
+                  UniLoaders.warningSnackBar(message: "Error: $e");
+                } finally {
+                  UniFullScreenLoader.stopLoading();
+                }
               },
               child: Text(
                   widget.isTopUp ? "Confirm Top Up" : "Confirm Withdrawal"),
